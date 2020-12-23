@@ -19,10 +19,32 @@ EnrollWindow = QtWidgets.QMainWindow()
 ui = Ui_MainWindow()
 enroll = Ui_EnrollWindow()
 
+class EnrollVideoThread(QThread):
+    enroll_pixmap = pyqtSignal(np.ndarray)
+    def __init__(self, camera, username):
+        super().__init__()
+        self.camera = camera
+        self.username = username
+
+    def run(self):
+        webcam = WebcamVideoStream(src=self.camera).start()
+        self.enr = Enroll(webcam, self.username)
+        self._run_flag = True
+        while self._run_flag:
+            self.enroll_pixmap.emit(self.enr.begin())
+        self.enr.stop()
+    
+    def again(self):
+        self._run_flag = True
+    def capture(self):
+        self.enr.capture()
+    def stop(self):
+        """Sets run flag to False and waits for thread to finish"""
+        self._run_flag = False
+        self.wait()
+
 class VideoThread(QThread):
     change_pixmap_signal = pyqtSignal(np.ndarray)
-    status_signal = pyqtSignal(str, name='status')
-
     def __init__(self, camera):
         super().__init__()
         self.camera = camera
@@ -56,24 +78,49 @@ class MainApp(QtWidgets.QApplication):
         super(MainApp, self).__init__(*args)
         self.setQuitOnLastWindowClosed(True)
         self.aboutToQuit.connect(self.onLastClosed)
+        self.lastWindowClosed.connect(self.destroyInstance)
+
+    def destroyInstance(self):
+        try:
+            self.enrollVideoThread.stop()
+        except:
+            print('destroy error')
+            pass
+        finally:
+            print('destroy instance')
 
     def onLastClosed(self):
         print("exiting ...")
-        self.videothread.stop()
         self.exit()
     
+    @pyqtSlot(np.ndarray)
+    def showEnrollVideo(self, cv_image):
+        enroll.camera.setPixmap(QtGui.QPixmap.fromImage(self.convertCvToPixmap(cv_image)))
+
+    def destroyEnrollWindows(self):
+        print('destroyed')
+
     def enrollUserWindow(self, name):
         enroll.setupUi(EnrollWindow)
         EnrollWindow.setWindowTitle(f'Registering {name}')
+        self.enrollVideoThread = EnrollVideoThread(2, name)
+        self.enrollVideoThread.enroll_pixmap.connect(self.showEnrollVideo)
+        self.enrollVideoThread.start()
+        enroll.pbCapture.clicked.connect(self.enrollVideoThread.capture)
         EnrollWindow.show()
+
 
     def dialog(self):
         text, okPressed = DialogWindow.getText(None, "Specify User Name",
                                                 "Enter name :",
                                                 QtWidgets.QLineEdit.Normal)
         if(okPressed):
-            self.enrollUserWindow(text)
-            self.videothread.stop()
+            try:
+                self.videothread.stop()
+            except:
+                print('Skip Error')
+            finally:
+                self.enrollUserWindow(text)
     @pyqtSlot(np.ndarray)
     def showVideo(self, cv_image):
         ui.camera.setPixmap(QtGui.QPixmap.fromImage(self.convertCvToPixmap(cv_image)))
