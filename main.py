@@ -1,13 +1,18 @@
 from ui.MainWindow import Ui_MainWindow
 from ui.EnrollWindow import Ui_EnrollWindow
+from ui.ConfirmDialog import Ui_ConfirmDialog
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtCore import pyqtSignal, pyqtSlot, Qt, QThread
+
+
+
 from core.Enroll import Enroll
 from core.WebcamVideoStream import WebcamVideoStream
 from core.PreviewCamera import PreviewCamera
 from core.FaceRecognition import FaceRecognitionVideo
 from core.Enroll import Enroll
+
 import sys
-from PyQt5.QtCore import pyqtSignal, pyqtSlot, Qt, QThread
 import numpy as np
 from time import sleep
 # PyQt5 window class defined here
@@ -21,6 +26,7 @@ enroll = Ui_EnrollWindow()
 
 class EnrollVideoThread(QThread):
     enroll_pixmap = pyqtSignal(np.ndarray)
+    enroll_count = pyqtSignal(int)
     def __init__(self, camera, username):
         super().__init__()
         self.camera = camera
@@ -37,7 +43,9 @@ class EnrollVideoThread(QThread):
     def again(self):
         self._run_flag = True
     def capture(self):
-        self.enr.capture()
+        # self.enr.capture()
+        self.enroll_count.emit(self.enr.capture())
+
     def stop(self):
         """Sets run flag to False and waits for thread to finish"""
         self._run_flag = False
@@ -45,16 +53,17 @@ class EnrollVideoThread(QThread):
 
 class VideoThread(QThread):
     change_pixmap_signal = pyqtSignal(np.ndarray)
+    detected_person = pyqtSignal(str)
     def __init__(self, camera):
         super().__init__()
         self.camera = camera
-
     def run(self):
         webcam = WebcamVideoStream(src=self.camera).start()
         self.pv = FaceRecognitionVideo(webcam)
         self._run_flag = True
         while self._run_flag:
             self.change_pixmap_signal.emit(self.pv.begin())
+            self.detected_person.emit('Nama : '+self.pv.getinfo()+'\nSuhu : 30 C')
         self.pv.stop()
     
     def again(self):
@@ -65,13 +74,11 @@ class VideoThread(QThread):
         self._run_flag = False
         self.wait()
 
-class TesThread(QThread):
+class TrainingThread(QThread):
     def run(self):
-        for i in range(10):
+        for i in range (10):
             print(i)
             sleep(0.5)
-        print('tes thread finished')
-
 
 class MainApp(QtWidgets.QApplication):
     def __init__(self, *args):
@@ -97,18 +104,19 @@ class MainApp(QtWidgets.QApplication):
     def showEnrollVideo(self, cv_image):
         enroll.camera.setPixmap(QtGui.QPixmap.fromImage(self.convertCvToPixmap(cv_image)))
 
-    def destroyEnrollWindows(self):
-        print('destroyed')
-
     def enrollUserWindow(self, name):
         enroll.setupUi(EnrollWindow)
         EnrollWindow.setWindowTitle(f'Registering {name}')
         self.enrollVideoThread = EnrollVideoThread(2, name)
         self.enrollVideoThread.enroll_pixmap.connect(self.showEnrollVideo)
+        self.enrollVideoThread.enroll_count.connect(self.changeCountEnroll)
         self.enrollVideoThread.start()
         enroll.pbCapture.clicked.connect(self.enrollVideoThread.capture)
         EnrollWindow.show()
 
+    @pyqtSlot(int)
+    def changeCountEnroll(self, value):
+        enroll.pbCapture.setText(f'{value} Captured')
 
     def dialog(self):
         text, okPressed = DialogWindow.getText(None, "Specify User Name",
@@ -128,16 +136,34 @@ class MainApp(QtWidgets.QApplication):
     def convertCvToPixmap(self,img):
         return QtGui.QImage(img, img.shape[1], img.shape[0], QtGui.QImage.Format_RGB888).rgbSwapped()
 
+    @pyqtSlot(str)
+    def setInfo(self, info):
+        ui.label_info.setText(info)
+
     def runVideoThread(self):
         self.videothread = VideoThread(2)
         if(self.videothread.isFinished):
             self.videothread.change_pixmap_signal.connect(self.showVideo)
+            self.videothread.detected_person.connect(self.setInfo)
             self.videothread.start()
+
+    def confirmDialog(self):
+        confirm = Ui_ConfirmDialog()
+        confirm.show()
+        if(confirm.isAccepted):
+            print('gassss training')
+            if(self.trainingThread.isFinished):
+                self.trainingThread.start()
+            if(self.trainingThread.isRunning):
+                print('already running')
+                
 
     def setupWindow(self):
         ui.setupUi(MainWindow)
         ui.pbAddUser.clicked.connect(self.dialog)
         ui.pbStart.clicked.connect(self.runVideoThread)
+        ui.pbTrain.clicked.connect(self.confirmDialog)
+        self.trainingThread = TrainingThread()
         MainWindow.show()
     def closeEvent(self):
         pv.stop()

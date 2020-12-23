@@ -53,6 +53,7 @@ class Enroll(object):
 			str(self.total).zfill(5))])
 		cv2.imwrite(p, self.orig)
 		self.total += 1
+		return self.total
 	
 	def stop(self):
 		print("[INFO] {} face images stored".format(self.total))

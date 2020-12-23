@@ -15,7 +15,7 @@ class FaceRecognitionVideo(object):
 		self.protoPath = "core/face_detection_model/deploy.prototxt"
 		self.modelPath = "core/face_detection_model/res10_300x300_ssd_iter_140000.caffemodel"
 		self.detector = cv2.dnn.readNetFromCaffe(self.protoPath, self.modelPath)
-		
+		self.name = ''
 		# load our serialized face embedding model from disk
 		print("[INFO] loading face recognizer...")
 		self.embedder = cv2.dnn.readNetFromTorch('core/openface_nn4.small2.v1.t7')
@@ -79,18 +79,19 @@ class FaceRecognitionVideo(object):
 				preds = self.recognizer.predict_proba(vec)[0]
 				j = np.argmax(preds)
 				proba = preds[j]
-				name = self.le.classes_[j]
+				self.name = self.le.classes_[j]
 	
 				# draw the bounding box of the face along with the
 				# associated probability
-				text = "{}: {:.2f}%".format(name, proba * 100)
+				text = "{}: {:.2f}%".format(self.name, proba * 100)
 				y = startY - 10 if startY - 10 > 10 else startY + 10
 				cv2.rectangle(self.frame, (startX, startY), (endX, endY),
 					(0, 0, 255), 2)
 				cv2.putText(self.frame, text, (startX, y),
 					cv2.FONT_HERSHEY_SIMPLEX, 0.45, (0, 0, 255), 2)
 		return self.frame
-
+	def getinfo(self):
+		return self.name
 	def stop(self):
 		# stop the timer and display FPS information
 		self.fps.stop()

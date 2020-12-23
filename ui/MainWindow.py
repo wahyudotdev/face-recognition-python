@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'mainwindow.ui'
+# Form implementation generated from reading ui file 'ui/mainwindow.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.2
 #
@@ -14,24 +14,28 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(379, 317)
+        MainWindow.resize(400, 365)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.pbAddUser = QtWidgets.QPushButton(self.centralwidget)
-        self.pbAddUser.setGeometry(QtCore.QRect(140, 240, 121, 25))
+        self.pbAddUser.setGeometry(QtCore.QRect(260, 290, 121, 25))
         self.pbAddUser.setObjectName("pbAddUser")
         self.pbStart = QtWidgets.QPushButton(self.centralwidget)
-        self.pbStart.setGeometry(QtCore.QRect(10, 240, 121, 25))
+        self.pbStart.setGeometry(QtCore.QRect(10, 290, 111, 25))
         self.pbStart.setObjectName("pbStart")
         self.camera = QtWidgets.QLabel(self.centralwidget)
-        self.camera.setGeometry(QtCore.QRect(10, 20, 341, 191))
+        self.camera.setGeometry(QtCore.QRect(50, 10, 300, 191))
         self.camera.setObjectName("camera")
+        self.pbTrain = QtWidgets.QPushButton(self.centralwidget)
+        self.pbTrain.setGeometry(QtCore.QRect(130, 290, 121, 25))
+        self.pbTrain.setObjectName("pbTrain")
+        self.label_info = QtWidgets.QLabel(self.centralwidget)
+        self.label_info.setGeometry(QtCore.QRect(10, 210, 371, 41))
+        self.label_info.setObjectName("label_info")
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 379, 22))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 400, 22))
         self.menubar.setObjectName("menubar")
-        self.menuMain = QtWidgets.QMenu(self.menubar)
-        self.menuMain.setObjectName("menuMain")
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
         self.statusbar.setObjectName("statusbar")
@@ -42,11 +46,6 @@ class Ui_MainWindow(object):
         self.actionUser.setObjectName("actionUser")
         self.actionExit = QtWidgets.QAction(MainWindow)
         self.actionExit.setObjectName("actionExit")
-        self.menuMain.addSeparator()
-        self.menuMain.addAction(self.actionMain)
-        self.menuMain.addAction(self.actionUser)
-        self.menuMain.addAction(self.actionExit)
-        self.menubar.addAction(self.menuMain.menuAction())
 
         self.retranslateUi(MainWindow)
         self.actionExit.triggered.connect(MainWindow.close)
@@ -58,7 +57,8 @@ class Ui_MainWindow(object):
         self.pbAddUser.setText(_translate("MainWindow", "Add User"))
         self.pbStart.setText(_translate("MainWindow", "Start Detection"))
         self.camera.setText(_translate("MainWindow", "Camera"))
-        self.menuMain.setTitle(_translate("MainWindow", "Menu"))
+        self.pbTrain.setText(_translate("MainWindow", "Re-Train"))
+        self.label_info.setText(_translate("MainWindow", "Info"))
         self.actionMain.setText(_translate("MainWindow", "Main"))
         self.actionUser.setText(_translate("MainWindow", "User List"))
         self.actionExit.setText(_translate("MainWindow", "Exit"))
