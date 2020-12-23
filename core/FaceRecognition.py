@@ -27,7 +27,8 @@ class FaceRecognitionVideo(object):
 		print("[INFO] starting video stream...")
 		# vs = VideoStream(src=2).start()
 		# self.vs = WebcamVideoStream.WebcamVideoStream(src=camera).start()
-		self.vs = WebcamVideoStream(camera).start()
+		# self.vs = WebcamVideoStream(camera).start()
+		self.vs = camera
 		time.sleep(2.0)
 		# start the FPS throughput estimator
 		self.fps = FPS().start()
