@@ -2,6 +2,7 @@ from ui.MainWindow import Ui_MainWindow
 from PyQt5 import QtCore, QtGui, QtWidgets
 from core.Enroll import Enroll
 from core.PreviewCamera import PreviewCamera
+from core.FaceRecognition import FaceRecognitionVideo
 import sys
 from PyQt5.QtCore import pyqtSignal, pyqtSlot, Qt, QThread
 import numpy as np
@@ -10,8 +11,8 @@ app = QtWidgets.QApplication(sys.argv)
 MainWindow = QtWidgets.QMainWindow()
 DialogWindow = QtWidgets.QInputDialog()
 ui = Ui_MainWindow()
-pv = PreviewCamera(2)
-
+# pv = PreviewCamera(2)
+pv = FaceRecognitionVideo(2)
 
 class VideoThread(QThread):
     change_pixmap_signal = pyqtSignal(np.ndarray)
@@ -54,6 +55,7 @@ class MainApp(QtWidgets.QWidget):
         self.thread.start()
         MainWindow.show()
     def closeEvent(self):
+        pv.stop()
         self.thread.stop()
 
 if __name__ == "__main__":
