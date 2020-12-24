@@ -1,6 +1,8 @@
 from ui.MainWindow import Ui_MainWindow
 from ui.EnrollWindow import Ui_EnrollWindow
 from ui.ConfirmDialog import Ui_ConfirmDialog
+from ui.UserListWindow import Ui_UserList
+
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import pyqtSignal, pyqtSlot, Qt, QThread
 
@@ -8,22 +10,25 @@ from PyQt5.QtCore import pyqtSignal, pyqtSlot, Qt, QThread
 
 from core.Enroll import Enroll
 from core.WebcamVideoStream import WebcamVideoStream
-from core.PreviewCamera import PreviewCamera
 from core.FaceRecognition import FaceRecognitionVideo
 from core.Enroll import Enroll
+from core.TrainModel import TrainModel
 
 import sys
 import numpy as np
 from time import sleep
+import pickle
+import os
+import shutil
 # PyQt5 window class defined here
 app = QtWidgets.QApplication(sys.argv)
 MainWindow = QtWidgets.QMainWindow()
 DialogWindow = QtWidgets.QInputDialog()
 EnrollWindow = QtWidgets.QMainWindow()
-
+UserListWindow = QtWidgets.QMainWindow()
 ui = Ui_MainWindow()
 enroll = Ui_EnrollWindow()
-
+userlist = Ui_UserList()
 class EnrollVideoThread(QThread):
     enroll_pixmap = pyqtSignal(np.ndarray)
     enroll_count = pyqtSignal(int)
@@ -75,10 +80,12 @@ class VideoThread(QThread):
         self.wait()
 
 class TrainingThread(QThread):
+
+    train_signal = pyqtSignal(bool, name='trainingfinished')
     def run(self):
-        for i in range (10):
-            print(i)
-            sleep(0.5)
+        t = TrainModel()
+        if(t.extractEmbedding()):
+            self.train_signal.emit(t.beginTraining())
 
 class MainApp(QtWidgets.QApplication):
     def __init__(self, *args):
@@ -148,7 +155,7 @@ class MainApp(QtWidgets.QApplication):
             self.videothread.start()
 
     def confirmDialog(self):
-        confirm = Ui_ConfirmDialog()
+        confirm = Ui_ConfirmDialog('Re-Train Dataset','Do you want to re-train your dataset?')
         confirm.show()
         if(confirm.isAccepted):
             print('gassss training')
@@ -156,14 +163,53 @@ class MainApp(QtWidgets.QApplication):
                 self.trainingThread.start()
             if(self.trainingThread.isRunning):
                 print('already running')
+
+    def isTrainingFinished(self):
+        print('[INFO] Training Finished with code 0')
+
+
+    def selectItem(self, item):
+        self.selected_user = str(item.data(0))
+        print(item.data(0))
+
+    def refreshUser(self):
+        files = []
+        for dirname, dirnames, filenames in os.walk('core/dataset'):
+                    for subdirname in dirnames:
+                        files.append(os.path.join(dirname, subdirname))
+        userlist.listWidget.addItems(files)
+
+    def deleteUser(self):
+        if(self.selected_user is not None):
+            confirm = Ui_ConfirmDialog('Delete User','Are you sure?')
+            confirm.show()
+            if(confirm.isAccepted):
+                try:
+                    shutil.rmtree(self.selected_user)
+                    print('deleted : '+self.selected_user)
+                except OSError as e:
+                    print("Error: %s : %s" % (self.selected_user, e.strerror))
                 
+                userlist.listWidget.takeItem(userlist.listWidget.currentRow())
+    
+    def userList(self):
+        userlist.setupUi(UserListWindow)
+        userlist.listWidget.itemClicked.connect(self.selectItem)
+        userlist.pbDeleteUser.clicked.connect(self.deleteUser)
+        self.selected_user = None
+        self.refreshUser()
+        UserListWindow.show()
+        
 
     def setupWindow(self):
         ui.setupUi(MainWindow)
         ui.pbAddUser.clicked.connect(self.dialog)
         ui.pbStart.clicked.connect(self.runVideoThread)
         ui.pbTrain.clicked.connect(self.confirmDialog)
+        ui.pbListUser.clicked.connect(self.userList)
         self.trainingThread = TrainingThread()
+        self.trainingThread.train_signal.connect(self.isTrainingFinished)
+
         MainWindow.show()
     def closeEvent(self):
         pv.stop()
