@@ -8,7 +8,8 @@ import pickle
 import time
 import cv2
 import os
-
+# from multiprocessing import Process, Pool
+from threading import Thread
 class FaceRecognitionVideo(object):
 	def __init__(self, camera):
 		self.threshold = 0.99
@@ -33,10 +34,50 @@ class FaceRecognitionVideo(object):
 		# start the FPS throughput estimator
 		self.fps = FPS().start()
 
+	def drawBondingBox(self, i):
+		confidence = self.detections[0, 0, i, 2]
+	
+		# filter out weak detections
+		if confidence > self.threshold:
+			# compute the (x, y)-coordinates of the bounding box for
+			# the face
+			box = self.detections[0, 0, i, 3:7] * np.array([self.w, self.h, self.w, self.h])
+			(startX, startY, endX, endY) = box.astype("int")
+
+			# extract the face ROI
+			face = self.frame[startY:endY, startX:endX]
+			(fH, fW) = face.shape[:2]
+
+			# ensure the face width and height are sufficiently large
+			# if fW < 20 or fH < 20:
+			# 	continue
+			# construct a blob for the face ROI, then pass the blob
+			# through our face embedding model to obtain the 128-d
+			# quantification of the face
+			faceBlob = cv2.dnn.blobFromImage(face, 1.0 / 255,
+				(96, 96), (0, 0, 0), swapRB=True, crop=False)
+			self.embedder.setInput(faceBlob)
+			vec = self.embedder.forward()
+			
+			# perform classification to recognize the face
+			preds = self.recognizer.predict_proba(vec)[0]
+			j = np.argmax(preds)
+			proba = preds[j]
+			self.name = self.le.classes_[j]
+
+			# draw the bounding box of the face along with the
+			# associated probability
+			text = "{}: {:.2f}%".format(self.name, proba * 100)
+			y = startY - 10 if startY - 10 > 10 else startY + 10
+			cv2.rectangle(self.frame, (startX, startY), (endX, endY),
+				(0, 0, 255), 2)
+			cv2.putText(self.frame, text, (startX, y),
+				cv2.FONT_HERSHEY_SIMPLEX, 0.45, (0, 0, 255), 2)
+
 	def begin(self):
 		self.frame = self.vs.read()
 		self.frame = imutils.resize(self.frame, width=300)
-		(h, w) = self.frame.shape[:2]
+		(self.h, self.w) = self.frame.shape[:2]
 	
 		# construct a blob from the image
 		imageBlob = cv2.dnn.blobFromImage(
@@ -46,49 +87,15 @@ class FaceRecognitionVideo(object):
 		# apply OpenCV's deep learning-based face detector to localize
 		# faces in the input image
 		self.detector.setInput(imageBlob)
-		detections = self.detector.forward()
-			# loop over the detections
-		for i in range(0, detections.shape[2]):
+		self.detections = self.detector.forward()
+		task = []
+		for i in range(0, self.detections.shape[2]):
+			task.append(Thread(target=self.drawBondingBox, args=[i]))
+			task[i].start()
 			# extract the confidence (i.e., probability) associated with
 			# the prediction
-			confidence = detections[0, 0, i, 2]
-	
-			# filter out weak detections
-			if confidence > self.threshold:
-				# compute the (x, y)-coordinates of the bounding box for
-				# the face
-				box = detections[0, 0, i, 3:7] * np.array([w, h, w, h])
-				(startX, startY, endX, endY) = box.astype("int")
-	
-				# extract the face ROI
-				face = self.frame[startY:endY, startX:endX]
-				(fH, fW) = face.shape[:2]
-	
-				# ensure the face width and height are sufficiently large
-				if fW < 20 or fH < 20:
-					continue
-				# construct a blob for the face ROI, then pass the blob
-				# through our face embedding model to obtain the 128-d
-				# quantification of the face
-				faceBlob = cv2.dnn.blobFromImage(face, 1.0 / 255,
-					(96, 96), (0, 0, 0), swapRB=True, crop=False)
-				self.embedder.setInput(faceBlob)
-				vec = self.embedder.forward()
-				
-				# perform classification to recognize the face
-				preds = self.recognizer.predict_proba(vec)[0]
-				j = np.argmax(preds)
-				proba = preds[j]
-				self.name = self.le.classes_[j]
-	
-				# draw the bounding box of the face along with the
-				# associated probability
-				text = "{}: {:.2f}%".format(self.name, proba * 100)
-				y = startY - 10 if startY - 10 > 10 else startY + 10
-				cv2.rectangle(self.frame, (startX, startY), (endX, endY),
-					(0, 0, 255), 2)
-				cv2.putText(self.frame, text, (startX, y),
-					cv2.FONT_HERSHEY_SIMPLEX, 0.45, (0, 0, 255), 2)
+		for i in range(0, self.detections.shape[2]):
+			task[i].join()
 		return self.frame
 	def getinfo(self):
 		return self.name
