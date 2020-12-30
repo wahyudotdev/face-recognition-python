@@ -2,6 +2,9 @@ from ui.MainWindow import Ui_MainWindow
 from ui.EnrollWindow import Ui_EnrollWindow
 from ui.ConfirmDialog import Ui_ConfirmDialog
 from ui.UserListWindow import Ui_UserList
+from ui.SettingWindow import Ui_SettingWindow
+
+from config.LoadConfig import LoadConfig
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import pyqtSignal, pyqtSlot, Qt, QThread
@@ -20,15 +23,20 @@ from time import sleep
 import pickle
 import os
 import shutil
+# Load config
+config = LoadConfig()
 # PyQt5 window class defined here
 app = QtWidgets.QApplication(sys.argv)
 MainWindow = QtWidgets.QMainWindow()
 DialogWindow = QtWidgets.QInputDialog()
 EnrollWindow = QtWidgets.QMainWindow()
 UserListWindow = QtWidgets.QMainWindow()
+SettingWindow = QtWidgets.QMainWindow()
+
 ui = Ui_MainWindow()
 enroll = Ui_EnrollWindow()
 userlist = Ui_UserList()
+setting = Ui_SettingWindow()
 class EnrollVideoThread(QThread):
     enroll_pixmap = pyqtSignal(np.ndarray)
     enroll_count = pyqtSignal(int)
@@ -87,6 +95,7 @@ class TrainingThread(QThread):
         if(t.extractEmbedding()):
             self.train_signal.emit(t.beginTraining())
 
+
 class MainApp(QtWidgets.QApplication):
     def __init__(self, *args):
         super(MainApp, self).__init__(*args)
@@ -114,7 +123,7 @@ class MainApp(QtWidgets.QApplication):
     def enrollUserWindow(self, name):
         enroll.setupUi(EnrollWindow)
         EnrollWindow.setWindowTitle(f'Registering {name}')
-        self.enrollVideoThread = EnrollVideoThread(2, name)
+        self.enrollVideoThread = EnrollVideoThread(int(config.camera_num), name)
         self.enrollVideoThread.enroll_pixmap.connect(self.showEnrollVideo)
         self.enrollVideoThread.enroll_count.connect(self.changeCountEnroll)
         self.enrollVideoThread.start()
@@ -148,7 +157,7 @@ class MainApp(QtWidgets.QApplication):
         ui.label_info.setText(info)
 
     def runVideoThread(self):
-        self.videothread = VideoThread(2)
+        self.videothread = VideoThread(int(config.camera_num))
         if(self.videothread.isFinished):
             self.videothread.change_pixmap_signal.connect(self.showVideo)
             self.videothread.detected_person.connect(self.setInfo)
@@ -199,7 +208,31 @@ class MainApp(QtWidgets.QApplication):
         self.selected_user = None
         self.refreshUser()
         UserListWindow.show()
-        
+    
+    def settingWindowSave(self):
+        config.saveConfig(setting.camera_num.toPlainText(),
+                            setting.userid.toPlainText(),
+                            setting.bot_token.toPlainText(),
+                            setting.db_ip.toPlainText(),
+                            setting.db_user.toPlainText(),
+                            setting.db_password.toPlainText())
+        SettingWindow.close()
+    def settingWindowLoadDefault(self):
+        config.defaultConfig()
+        SettingWindow.close()
+
+    def settingWindow(self):
+        setting.setupUi(SettingWindow)
+        setting.camera_num.setPlainText(config.camera_num)
+        setting.userid.setPlainText(config.userid)
+        setting.bot_token.setPlainText(config.bot_token)
+        setting.db_ip.setPlainText(config.db_ip)
+        setting.db_user.setPlainText(config.db_user)
+        setting.db_password.setPlainText(config.db_password)
+        setting.pbSave.clicked.connect(self.settingWindowSave)
+        setting.pbDefault.clicked.connect(self.settingWindowLoadDefault)
+        setting.pbCancel.clicked.connect(SettingWindow.close)
+        SettingWindow.show()
 
     def setupWindow(self):
         ui.setupUi(MainWindow)
@@ -207,9 +240,9 @@ class MainApp(QtWidgets.QApplication):
         ui.pbStart.clicked.connect(self.runVideoThread)
         ui.pbTrain.clicked.connect(self.confirmDialog)
         ui.pbListUser.clicked.connect(self.userList)
+        ui.pbSettings.clicked.connect(self.settingWindow)
         self.trainingThread = TrainingThread()
         self.trainingThread.train_signal.connect(self.isTrainingFinished)
-
         MainWindow.show()
     def closeEvent(self):
         pv.stop()

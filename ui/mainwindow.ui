@@ -17,7 +17,7 @@
    <widget class="QPushButton" name="pbAddUser">
     <property name="geometry">
      <rect>
-      <x>220</x>
+      <x>140</x>
       <y>280</y>
       <width>121</width>
       <height>25</height>
@@ -30,7 +30,7 @@
    <widget class="QPushButton" name="pbStart">
     <property name="geometry">
      <rect>
-      <x>50</x>
+      <x>20</x>
       <y>280</y>
       <width>111</width>
       <height>25</height>
@@ -71,7 +71,7 @@
    <widget class="QPushButton" name="pbTrain">
     <property name="geometry">
      <rect>
-      <x>50</x>
+      <x>20</x>
       <y>310</y>
       <width>111</width>
       <height>25</height>
@@ -103,7 +103,7 @@ Suhu</string>
    <widget class="QPushButton" name="pbListUser">
     <property name="geometry">
      <rect>
-      <x>220</x>
+      <x>140</x>
       <y>310</y>
       <width>121</width>
       <height>25</height>
@@ -111,6 +111,32 @@ Suhu</string>
     </property>
     <property name="text">
      <string>List User</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pbSettings">
+    <property name="geometry">
+     <rect>
+      <x>270</x>
+      <y>280</y>
+      <width>121</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Settings</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pbExit">
+    <property name="geometry">
+     <rect>
+      <x>270</x>
+      <y>310</y>
+      <width>121</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Exit</string>
     </property>
    </widget>
   </widget>
