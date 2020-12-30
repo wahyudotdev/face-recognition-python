@@ -83,7 +83,7 @@ class VideoThread(QThread):
             name = self.pv.getinfo()
             temp = 33
             if(name !='' and name != None):
-                Process(target=report.insert, args=(name,temp)).start()
+                report.insert(name, temp)
             self.change_pixmap_signal.emit(frame)
             self.detected_person.emit(F'Nama : {name}\nSuhu : {temp} C')
         self.pv.stop()
