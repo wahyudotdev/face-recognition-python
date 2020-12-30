@@ -107,7 +107,7 @@ class MainApp(QtWidgets.QApplication):
         try:
             self.enrollVideoThread.stop()
         except:
-            print('destroy error')
+            # print('destroy error')
             pass
         finally:
             print('destroy instance')
@@ -115,6 +115,8 @@ class MainApp(QtWidgets.QApplication):
     def onLastClosed(self):
         print("exiting ...")
         self.exit()
+        import subprocess
+        subprocess.run("killall -9 python",shell=True)
     
     @pyqtSlot(np.ndarray)
     def showEnrollVideo(self, cv_image):
