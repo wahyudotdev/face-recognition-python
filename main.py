@@ -6,6 +6,8 @@ from ui.SettingWindow import Ui_SettingWindow
 
 from config.LoadConfig import LoadConfig
 
+from db.Report import Report
+
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import pyqtSignal, pyqtSlot, Qt, QThread
 
@@ -23,8 +25,10 @@ from time import sleep
 import pickle
 import os
 import shutil
+from multiprocessing import Process
 # Load config
 config = LoadConfig()
+report = Report(config.chat_id, config.bot_token, config.db_ip, config.db_user, config.db_password)
 # PyQt5 window class defined here
 app = QtWidgets.QApplication(sys.argv)
 MainWindow = QtWidgets.QMainWindow()
@@ -75,8 +79,13 @@ class VideoThread(QThread):
         self.pv = FaceRecognitionVideo(webcam)
         self._run_flag = True
         while self._run_flag:
-            self.change_pixmap_signal.emit(self.pv.begin())
-            self.detected_person.emit('Nama : '+self.pv.getinfo()+'\nSuhu : 30 C')
+            frame = self.pv.begin()
+            name = self.pv.getinfo()
+            temp = 33
+            if(name !='' and name != None):
+                Process(target=report.insert, args=(name,temp)).start()
+            self.change_pixmap_signal.emit(frame)
+            self.detected_person.emit(F'Nama : {name}\nSuhu : {temp} C')
         self.pv.stop()
     
     def again(self):
@@ -226,7 +235,7 @@ class MainApp(QtWidgets.QApplication):
     def settingWindow(self):
         setting.setupUi(SettingWindow)
         setting.camera_num.setPlainText(config.camera_num)
-        setting.userid.setPlainText(config.userid)
+        setting.userid.setPlainText(config.chat_id)
         setting.bot_token.setPlainText(config.bot_token)
         setting.db_ip.setPlainText(config.db_ip)
         setting.db_user.setPlainText(config.db_user)

@@ -10,7 +10,7 @@ import os
 class Enroll(object):
 	def __init__(self, camera, username):
 		self.username = "core/dataset/"+username
-		self.detector = cv2.CascadeClassifier('core/haarcascade_frontalface_default.xml')
+		self.detector = cv2.CascadeClassifier('core/eigen.xml')
 		if not os.path.exists(self.username):
 			os.makedirs(self.username)
 		# self.vs = VideoStream(src=camera).start()

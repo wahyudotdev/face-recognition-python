@@ -26,14 +26,15 @@ class Report(object):
         else:
             return False
     def insert(self, name, temperature):
-        if(self.lastname != name):
-            if(self.__isAvailable()):
-                self.lastname = name
-                Process(target=self.send, args=(name, temperature)).start()
-                return True
-            else:
-                print("Telah absen")
-                return False
+        # if(self.lastname != name):
+        if(self.__isAvailable()):
+            # self.lastname = name
+            self.send(str(name), str(temperature))
+            # Process(target=self.send, args=(name, temperature)).start()
+            return True
+        else:
+            # print("Telah absen")
+            return False
     def send(self, name, temperature):
         time = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
         sql = 'INSERT INTO tb_absen (nama, suhu, waktu) values (%s, %s, %s)'
@@ -43,8 +44,8 @@ class Report(object):
         url = f"https://api.telegram.org/bot{self.bot_token}/sendPhoto"
         message = f'Nama : {name}\nSuhu : {temperature}\nWaktu : {time}'
         obj = {f'chat_id': self.chat_id,'caption':message}
-        files = {'photo': ('cat.jpg', open('db/cat.jpg', 'rb'), {'Expires': '0'})}
+        files = {'photo': ('person.jpg', open('db/person.jpg', 'rb'), {'Expires': '0'})}
         r = requests.post(url=url, data=obj, files=files)
 
-r = Report("1123810574", "1096181817:AAFAdvG8exQgYiF6q6s3g2pWGwNBwLsUHa4",'localhost','root','raspberry')
-print(r.insert("Wahyu", "33"))
+# r = Report("1123810574", "1096181817:AAFAdvG8exQgYiF6q6s3g2pWGwNBwLsUHa4",'localhost','root','raspberry')
+# print(r.insert("Wahyu", "33"))

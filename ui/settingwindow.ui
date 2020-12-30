@@ -60,7 +60,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>User ID telegram</string>
+     <string>Telegram chat ID</string>
     </property>
    </widget>
    <widget class="QTextEdit" name="bot_token">
@@ -106,7 +106,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>IP Database</string>
+     <string>Database IP</string>
     </property>
    </widget>
    <widget class="QTextEdit" name="db_user">
@@ -129,7 +129,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>User Database</string>
+     <string>Database user</string>
     </property>
    </widget>
    <widget class="QTextEdit" name="db_password">
@@ -152,7 +152,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>Password Database</string>
+     <string>Database password</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_6">

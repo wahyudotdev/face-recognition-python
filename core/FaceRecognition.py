@@ -8,7 +8,7 @@ import pickle
 import time
 import cv2
 import os
-# from multiprocessing import Process, Pool
+from multiprocessing import Process, Pool
 from threading import Thread
 class FaceRecognitionVideo(object):
 	def __init__(self, camera):
@@ -84,6 +84,7 @@ class FaceRecognitionVideo(object):
 		# faces in the input image
 		self.detector.setInput(imageBlob)
 		self.detections = self.detector.forward()
+		Process(target=cv2.imwrite, args=('db/person.jpg',self.frame)).start()
 		task = []
 		for i in range(0, self.detections.shape[2]):
 			task.append(Thread(target=self.drawBondingBox, args=[i]))
