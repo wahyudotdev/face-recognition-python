@@ -47,10 +47,6 @@ class FaceRecognitionVideo(object):
 			# extract the face ROI
 			face = self.frame[startY:endY, startX:endX]
 			(fH, fW) = face.shape[:2]
-
-			# ensure the face width and height are sufficiently large
-			# if fW < 20 or fH < 20:
-			# 	continue
 			# construct a blob for the face ROI, then pass the blob
 			# through our face embedding model to obtain the 128-d
 			# quantification of the face
