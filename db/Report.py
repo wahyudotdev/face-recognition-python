@@ -41,7 +41,7 @@ class Report(object):
             return False
     def send(self, name, temperature, time):
         url = f"https://api.telegram.org/bot{self.bot_token}/sendPhoto"
-        message = f'Nama : {name}\nSuhu : {temperature}\nWaktu : {time}'
+        message = f'Nama : {name}\nSuhu : {temperature}°C\nWaktu : {time}'
         obj = {f'chat_id': self.chat_id,'caption':message}
         files = {'photo': ('person.jpg', open('db/person.jpg', 'rb'), {'Expires': '0'})}
         r = requests.post(url=url, data=obj, files=files)
