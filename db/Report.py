@@ -5,6 +5,7 @@ from multiprocessing import Process
 class Report(object):
     def __init__(self, chat_id, bot_token, db_ip, db_user, db_password):
         self.lastname = None
+        self.count = 0
         self.bot_token = bot_token
         self.chat_id = chat_id
         try:
@@ -28,14 +29,23 @@ class Report(object):
         
     def insert(self, name, temperature):
         if(self.__isAvailable(name) and name != 'unknown'):
-            time = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
-            sql = 'INSERT INTO tb_absen (nama, suhu, waktu) values (%s, %s, %s)'
-            val = (str(name), str(temperature), str(time))
-            self.cursor.execute(sql,val)
-            self.db.commit()      
-            p = Process(target=self.send, args=(name, temperature, time))
-            p.start()
-            return True
+            if(name == self.lastname):
+                self.count = self.count+1
+            else:
+                self.count = 0
+            
+            print(f"count : {self.count}")
+
+            if(self.count >= 5):
+                print(f"sending . .")
+                time = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+                sql = 'INSERT INTO tb_absen (nama, suhu, waktu) values (%s, %s, %s)'
+                val = (str(name), str(temperature), str(time))
+                self.cursor.execute(sql,val)
+                self.db.commit()      
+                p = Process(target=self.send, args=(name, temperature, time))
+                p.start()
+                return True
         else:
             # print("Telah absen")
             return False
