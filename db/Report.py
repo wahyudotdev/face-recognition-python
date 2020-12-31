@@ -33,7 +33,7 @@ class Report(object):
                 self.count = self.count+1
             else:
                 self.count = 0
-            
+            self.lastname = name
             print(f"count : {self.count}")
 
             if(self.count >= 5):
