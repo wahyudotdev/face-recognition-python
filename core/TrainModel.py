@@ -27,7 +27,7 @@ class TrainModel(object):
         # corresponding people names
         self.knownEmbeddings = []
         self.knownNames = []
-        self.threshold = 0.7
+        self.threshold = 0.99
         # initialize the self.total number of faces processed
         self.total = 0
     
