@@ -13,6 +13,3 @@ class Peripheral(object):
         self.lcd.lcd_display_string(f'Nama : {name}',1)
         self.lcd.lcd_display_string(f'Suhu : {temp}C')
         return temp
-
-p = Peripheral()
-print(p.getTemp('tes'))
