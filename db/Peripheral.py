@@ -1,4 +1,4 @@
-import db.I2C_LCD_driver
+import I2C_LCD_driver
 from mlx90614 import MLX90614
 from smbus2 import SMBus
 
