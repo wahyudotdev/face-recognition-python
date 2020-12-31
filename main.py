@@ -43,9 +43,14 @@ userlist = Ui_UserList()
 setting = Ui_SettingWindow()
 
 # I2C
-from db.Peripheral import Peripheral
-peripheral = Peripheral()
-
+# from db.Peripheral import Peripheral
+# peripheral = Peripheral()
+class PushButtonThread(QThread):
+    pushbutton = pyqtSignal(bool)
+    print('reading push button')
+    def run(self):
+        sleep(5)
+        # self.pushbutton.emit(True)
 class EnrollVideoThread(QThread):
     enroll_pixmap = pyqtSignal(np.ndarray)
     enroll_count = pyqtSignal(int)
@@ -85,10 +90,12 @@ class VideoThread(QThread):
         self._run_flag = True
         while self._run_flag:
             frame = self.pv.begin()
-            name = self.pv.getinfo()
-            temp = peripheral.getTemp(name)
+            name = self.pv.name
+            # temp = peripheral.getTemp(name)
+            temp = 33
             if(name !='' and name != None):
                 report.insert(name, temp)
+                self.pv.name = None
             self.change_pixmap_signal.emit(frame)
             self.detected_person.emit(F'Nama : {name}\nSuhu : {temp} C')
         self.pv.stop()
@@ -171,8 +178,9 @@ class MainApp(QtWidgets.QApplication):
     @pyqtSlot(str)
     def setInfo(self, info):
         ui.label_info.setText(info)
-
-    def runVideoThread(self):
+    
+    @pyqtSlot(bool)
+    def runVideoThread(self, bool):
         self.videothread = VideoThread(int(config.camera_num))
         if(self.videothread.isFinished):
             self.videothread.change_pixmap_signal.connect(self.showVideo)
@@ -257,6 +265,9 @@ class MainApp(QtWidgets.QApplication):
         ui.pbTrain.clicked.connect(self.confirmDialog)
         ui.pbListUser.clicked.connect(self.userList)
         ui.pbSettings.clicked.connect(self.settingWindow)
+        self.pbThread = PushButtonThread()
+        self.pbThread.pushbutton.connect(self.runVideoThread)
+        self.pbThread.start()
         self.trainingThread = TrainingThread()
         self.trainingThread.train_signal.connect(self.isTrainingFinished)
         MainWindow.show()
