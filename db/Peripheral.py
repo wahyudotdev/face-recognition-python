@@ -6,7 +6,7 @@ class Peripheral(object):
     def __init__(self):
         self.lcd = I2C_LCD_driver.lcd()
         self.bus = SMBus(1)
-        self.mlx = MLX90614(bus, address=0x5A)
+        self.mlx = MLX90614(self.bus, address=0x5A)
     
     def getTemp(self, name):
         temp = str(int(self.mlx.get_object_1()))
