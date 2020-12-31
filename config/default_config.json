@@ -1,8 +1,8 @@
 {
     "camera_num":"0",
-    "chat_id": "1123810574",
-    "bot_token":"1096181817:AAFAdvG8exQgYiF6q6s3g2pWGwNBwLsUHa4",
+    "chat_id": "1465722786",
+    "bot_token":"1452767150:AAG6WYRRI2CxulUreA6c4I5gPQiL3XNxcIY",
     "db_ip": "localhost",
-    "db_user": "root",
+    "db_user": "pi",
     "db_password": "raspberry"
 }
