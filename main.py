@@ -41,6 +41,11 @@ ui = Ui_MainWindow()
 enroll = Ui_EnrollWindow()
 userlist = Ui_UserList()
 setting = Ui_SettingWindow()
+
+# I2C
+from db.Peripheral import Peripheral
+peripheral = Peripheral()
+
 class EnrollVideoThread(QThread):
     enroll_pixmap = pyqtSignal(np.ndarray)
     enroll_count = pyqtSignal(int)
@@ -81,7 +86,7 @@ class VideoThread(QThread):
         while self._run_flag:
             frame = self.pv.begin()
             name = self.pv.getinfo()
-            temp = 33
+            temp = peripheral.getTemp(name)
             if(name !='' and name != None):
                 report.insert(name, temp)
             self.change_pixmap_signal.emit(frame)
