@@ -10,6 +10,6 @@ class Peripheral(object):
     
     def getTemp(self, name):
         temp = str(int(self.mlx.get_object_1()))
-        self.lcd.lcd_display_string(f'Nama : {name}',0)
-        self.lcd.lcd_display_string(f'Suhu : {temp}C',1)
+        self.lcd.lcd_display_string(f'Nama : {name}',1)
+        self.lcd.lcd_display_string(f'Suhu : {temp}C',2)
         return temp
