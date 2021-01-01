@@ -18,7 +18,6 @@ from core.WebcamVideoStream import WebcamVideoStream
 from core.FaceRecognition import FaceRecognitionVideo
 from core.Enroll import Enroll
 from core.TrainModel import TrainModel
-import Eigen
 import sys
 import numpy as np
 from time import sleep
