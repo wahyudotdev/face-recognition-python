@@ -49,8 +49,7 @@ led_status.start()
 
 class Report(object):
     def __init__(self, chat_id, bot_token, db_ip, db_user, db_password):
-        # led_status.status.emit(0)
-        led_status.intstatus = 0
+        led_status.status.emit(0)
         self.lastname = None
         self.count = 0
         self.bot_token = bot_token
@@ -89,7 +88,6 @@ class Report(object):
             self.lastname = name
             if(self.count >= 3):
                 led_status.status.emit(2)
-                # led_status.intstatus = 2
                 self.count = 0
                 if(self.__isAvailable(name)):
                         print(f"sending . .")
