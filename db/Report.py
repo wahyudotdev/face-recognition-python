@@ -46,13 +46,13 @@ class LedStatus(QThread):
         self.value = val
 
 
-led_status = LedStatus()
-led_status.status.connect(led_status.recv)
-led_status.start()
+# led_status = LedStatus()
+# led_status.status.connect(led_status.recv)
+# led_status.start()
 
 class Report(object):
     def __init__(self, chat_id, bot_token, db_ip, db_user, db_password):
-        led_status.status.emit(0)
+        # led_status.status.emit(0)
         self.lastname = None
         self.count = 0
         self.bot_token = bot_token
@@ -90,7 +90,7 @@ class Report(object):
                 self.count = 0
             self.lastname = name
             if(self.count >= 3):
-                led_status.status.emit(2)
+                # led_status.status.emit(2)
                 self.count = 0
                 if(self.__isAvailable(name)):
                         print(f"sending . .")
@@ -111,6 +111,7 @@ class Report(object):
                     # print("Telah absen")
                     return False
     def send(self, name, temperature, time):
+        print('buka')
         red.off()
         blue.on()
         servo.max()
@@ -123,5 +124,6 @@ class Report(object):
         blue.off()
         servo.min()
         red.on()
+        print('tutup')
 # r = Report("1123810574", "1096181817:AAFAdvG8exQgYiF6q6s3g2pWGwNBwLsUHa4",'localhost','root','raspberry')
 # print(r.insert("Wahyu", "33"))
