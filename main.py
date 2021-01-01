@@ -51,12 +51,13 @@ from gpiozero import Button
 class PushButtonThread(QThread):
     pushbutton = pyqtSignal(bool)
     def run(self):
-        button = Button(10)
+        self.button = Button(10)
         while True:
-            if(button.is_pressed):
+            if(self.button.is_pressed):
                 self.pushbutton.emit(True)
             sleep(0.5)
     def stop(self):
+        self.button.close()
         self.terminate()
 
 class EnrollVideoThread(QThread):
