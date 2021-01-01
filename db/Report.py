@@ -6,38 +6,34 @@ from PyQt5.QtCore import pyqtSignal, pyqtSlot, Qt, QThread
 from time import sleep
 from gpiozero import LED, Servo
 
-red = LED(17) # Pin 11
-yellow = LED(27) # Pin 13
-blue = LED(22) # Pin 15
-servo = Servo(9)
+
 class LedStatus(QThread):
     status = pyqtSignal(int)
     value = None
     def run(self):
-        servo.min()
         while True:
             sleep(2)
             if(self.value == 0):
                 try:
                     print('led merah')
-                    # servo.min()
-                    # red.on()
+                    # self.servo.min()
+                    # self.red.on()
                 except:
                     pass
             if(self.value == 1):
                 try:
                     print('led kuning')
-                    # yellow.on()
-                    # red.on()
+                    # self.yellow.on()
+                    # self.red.on()
                 except:
                     pass
             if(self.value == 2):
                 try:
                     print('led hijau')
-                    # blue.on()
-                    # red.off()
-                    # servo.max()
-                    # yellow.off()
+                    # self.green.on()
+                    # self.red.off()
+                    # self.servo.max()
+                    # self.yellow.off()
                 except:
                     pass
 
@@ -57,6 +53,10 @@ class Report(object):
         self.count = 0
         self.bot_token = bot_token
         self.chat_id = chat_id
+        self.red = LED(17) # Pin 11
+        self.yellow = LED(27) # Pin 13
+        self.green = LED(22) # Pin 15
+        self.servo = Servo(9)
         try:
             self.db = mysql.connector.connect(
                 host = db_ip,
@@ -92,6 +92,7 @@ class Report(object):
             if(self.count >= 3):
                 # led_status.status.emit(2)
                 self.count = 0
+                self.authenticated()
                 if(self.__isAvailable(name)):
                         print(f"sending . .")
                         time = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
@@ -111,19 +112,22 @@ class Report(object):
                     # print("Telah absen")
                     return False
     def send(self, name, temperature, time):
-        print('buka')
-        red.off()
-        blue.on()
-        servo.max()
+
         url = f"https://api.telegram.org/bot{self.bot_token}/sendPhoto"
         message = f'Nama : {name}\nSuhu : {temperature}°C\nWaktu : {time}'
         obj = {f'chat_id': self.chat_id,'caption':message}
         files = {'photo': ('person.jpg', open('db/person.jpg', 'rb'), {'Expires': '0'})}
         r = requests.post(url=url, data=obj, files=files)
+
+    def authenticated(self):
+        print('buka')
+        self.red.off()
+        self.green.on()
+        self.servo.max()
         sleep(5)
-        blue.off()
-        servo.min()
-        red.on()
+        self.green.off()
+        self.servo.min()
+        self.red.on()
         print('tutup')
 # r = Report("1123810574", "1096181817:AAFAdvG8exQgYiF6q6s3g2pWGwNBwLsUHa4",'localhost','root','raspberry')
 # print(r.insert("Wahyu", "33"))
