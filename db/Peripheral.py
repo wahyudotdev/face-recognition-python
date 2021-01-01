@@ -9,6 +9,8 @@ class Peripheral(object):
         self.mlx = MLX90614(self.bus, address=0x5A)
     def getTemp(self, name):
         temp = str(int(self.mlx.get_object_1()))
-        self.lcd.lcd_display_string(f'Nama : {name}',1)
-        self.lcd.lcd_display_string(f'Suhu : {temp}C',2)
+        if(name != None and name != '' and name != 'unknown'):
+            self.lcd.lcd_clear()
+            self.lcd.lcd_display_string(f'Nama : {name}',1)
+            self.lcd.lcd_display_string(f'Suhu : {temp}C',2)
         return temp
