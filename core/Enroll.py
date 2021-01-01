@@ -5,7 +5,7 @@ import imutils
 import time
 import cv2
 import os
-
+import Eigen
 
 class Enroll(object):
 	def __init__(self, camera, username):

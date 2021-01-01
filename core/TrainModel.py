@@ -7,7 +7,7 @@ import imutils
 import pickle
 import cv2
 import os
- 
+import Eigen 
 class TrainModel(object):
     def __init__(self):
         print("[INFO] loading face self.detector...")

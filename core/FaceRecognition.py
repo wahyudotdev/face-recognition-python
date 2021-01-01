@@ -10,6 +10,7 @@ import cv2
 import os
 from multiprocessing import Process, Pool
 from threading import Thread
+import Eigen
 class FaceRecognitionVideo(object):
 	def __init__(self, camera):
 		self.threshold = 0.99
