@@ -55,7 +55,9 @@ class PushButtonThread(QThread):
         while True:
             if(button.is_pressed):
                 self.pushbutton.emit(True)
-            sleep(0.1)
+            sleep(0.5)
+    def stop(self):
+        self.terminate()
 
 class EnrollVideoThread(QThread):
     enroll_pixmap = pyqtSignal(np.ndarray)
@@ -187,6 +189,7 @@ class MainApp(QtWidgets.QApplication):
     
     @pyqtSlot(bool)
     def runVideoThread(self, bool):
+        self.pbThread.stop()
         self.videothread = VideoThread(int(config.camera_num))
         if(self.videothread.isFinished):
             self.videothread.change_pixmap_signal.connect(self.showVideo)
