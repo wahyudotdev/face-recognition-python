@@ -105,17 +105,23 @@ class Report(object):
                             pass
                         p = Process(target=self.send, args=(name, temperature, time))
                         p.start()
-                        led_status.status.emit(2)
+                        # led_status.status.emit(2)
                         return True
                 else:
                     # print("Telah absen")
                     return False
     def send(self, name, temperature, time):
+        red.off()
+        blue.on()
+        servo.max()
         url = f"https://api.telegram.org/bot{self.bot_token}/sendPhoto"
         message = f'Nama : {name}\nSuhu : {temperature}°C\nWaktu : {time}'
         obj = {f'chat_id': self.chat_id,'caption':message}
         files = {'photo': ('person.jpg', open('db/person.jpg', 'rb'), {'Expires': '0'})}
         r = requests.post(url=url, data=obj, files=files)
-
+        sleep(5)
+        blue.off()
+        servo.min()
+        red.on()
 # r = Report("1123810574", "1096181817:AAFAdvG8exQgYiF6q6s3g2pWGwNBwLsUHa4",'localhost','root','raspberry')
 # print(r.insert("Wahyu", "33"))
