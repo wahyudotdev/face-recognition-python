@@ -23,22 +23,29 @@ class LedStatus(QThread):
     @pyqtSlot(int)
     def recv(self, value):
         if(value == 0):
-            print('LED merah')
-            servo.min()
-            red.on()
+            try:
+                servo.min()
+                red.on()
+            except:
+                pass
         if(value == 1):
-            yellow.on()
-            red.on()
-            print('LED kuning')
+            try:
+                yellow.on()
+                red.on()
+            except:
+                pass
         if(value == 2):
-            print('LED biru')
-            blue.on()
-            red.off()
-            servo.max()
-            yellow.off()
-            sleep(5)
-            servo.min()
-            red.on()
+            try:
+                blue.on()
+                red.off()
+                servo.max()
+                yellow.off()
+                sleep(5)
+                servo.min()
+                blue.off()
+                red.on()
+            except:
+                pass
 
 led_status = LedStatus()
 led_status.status.connect(led_status.recv)
