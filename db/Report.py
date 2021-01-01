@@ -12,40 +12,36 @@ blue = LED(22) # Pin 15
 servo = Servo(9)
 class LedStatus(QThread):
     status = pyqtSignal(int)
+    value = None
     def run(self):
         servo.min()
         while True:
-            # red.off()
-            # yellow.off()
-            # blue.off()
-            sleep(15)
+            sleep(2)
+            if(self.value == 0):
+                try:
+                    servo.min()
+                    red.on()
+                except:
+                    pass
+            if(self.value == 1):
+                try:
+                    yellow.on()
+                    red.on()
+                except:
+                    pass
+            if(self.value == 2):
+                try:
+                    blue.on()
+                    red.off()
+                    servo.max()
+                    yellow.off()
+                except:
+                    pass
 
     @pyqtSlot(int)
-    def recv(self, value):
-        if(value == 0):
-            try:
-                servo.min()
-                red.on()
-            except:
-                pass
-        if(value == 1):
-            try:
-                yellow.on()
-                red.on()
-            except:
-                pass
-        if(value == 2):
-            try:
-                blue.on()
-                red.off()
-                servo.max()
-                yellow.off()
-                sleep(5)
-                servo.min()
-                blue.off()
-                red.on()
-            except:
-                pass
+    def recv(self, val):
+        self.value = val
+
 
 led_status = LedStatus()
 led_status.status.connect(led_status.recv)
@@ -53,7 +49,8 @@ led_status.start()
 
 class Report(object):
     def __init__(self, chat_id, bot_token, db_ip, db_user, db_password):
-        led_status.status.emit(0)
+        # led_status.status.emit(0)
+        led_status.intstatus = 0
         self.lastname = None
         self.count = 0
         self.bot_token = bot_token
@@ -92,6 +89,7 @@ class Report(object):
             self.lastname = name
             if(self.count >= 3):
                 led_status.status.emit(2)
+                # led_status.intstatus = 2
                 self.count = 0
                 if(self.__isAvailable(name)):
                         print(f"sending . .")
