@@ -3,3 +3,5 @@ dataset/
 core/dataset/
 core/__pycache_
 .vscode/
+db/people*
+*.pyc

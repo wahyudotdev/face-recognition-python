@@ -42,15 +42,21 @@ enroll = Ui_EnrollWindow()
 userlist = Ui_UserList()
 setting = Ui_SettingWindow()
 
-# I2C
-# from db.Peripheral import Peripheral
-# peripheral = Peripheral()
+# I2C and Peripheral
+
+from db.Peripheral import Peripheral
+peripheral = Peripheral()
+from gpiozero import Button
+
 class PushButtonThread(QThread):
     pushbutton = pyqtSignal(bool)
-    print('reading push button')
     def run(self):
-        sleep(5)
-        # self.pushbutton.emit(True)
+        button = Button(10)
+        while True:
+            if(button.is_pressed):
+                self.pushbutton.emit(True)
+            sleep(0.1)
+
 class EnrollVideoThread(QThread):
     enroll_pixmap = pyqtSignal(np.ndarray)
     enroll_count = pyqtSignal(int)

@@ -4,14 +4,16 @@ import requests
 from multiprocessing import Process
 from PyQt5.QtCore import pyqtSignal, pyqtSlot, Qt, QThread
 from time import sleep
-from gpiozero import LED
+from gpiozero import LED, Servo
 
 red = LED(17) # Pin 11
 yellow = LED(27) # Pin 13
 blue = LED(22) # Pin 15
+servo = Servo(9)
 class LedStatus(QThread):
     status = pyqtSignal(int)
     def run(self):
+        servo.min()
         while True:
             # red.off()
             # yellow.off()
@@ -22,6 +24,7 @@ class LedStatus(QThread):
     def recv(self, value):
         if(value == 0):
             print('LED merah')
+            servo.min()
             red.on()
         if(value == 1):
             yellow.on()
@@ -31,8 +34,10 @@ class LedStatus(QThread):
             print('LED biru')
             blue.on()
             red.off()
+            servo.max()
             yellow.off()
-            sleep(10)
+            sleep(5)
+            servo.min()
             red.on()
 
 led_status = LedStatus()
