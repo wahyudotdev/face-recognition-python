@@ -19,6 +19,7 @@ class Report(object):
         self.servo = Servo(9)
         self.red.off()
         self.servo.min()
+        self.is_opening = False
         try:
             self.db = mysql.connector.connect(
                 host = db_ip,
@@ -55,7 +56,8 @@ class Report(object):
                 # led_status.status.emit(2)
                 self.count = 0
                 try:
-                    self.authenticated()
+                    if(self.is_opening == False):
+                        self.authenticated()
                 except:
                     pass
 
@@ -86,6 +88,7 @@ class Report(object):
         r = requests.post(url=url, data=obj, files=files)
 
     def authenticated(self):
+        self.is_opening = True
         print('buka')
         self.red.off()
         self.green.on()
@@ -95,5 +98,6 @@ class Report(object):
         self.servo.min()
         self.red.on()
         print('tutup')
+        self.is_opening = False
 # r = Report("1123810574", "1096181817:AAFAdvG8exQgYiF6q6s3g2pWGwNBwLsUHa4",'localhost','root','raspberry')
 # print(r.insert("Wahyu", "33"))
