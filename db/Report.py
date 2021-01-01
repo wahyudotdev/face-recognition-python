@@ -57,6 +57,8 @@ class Report(object):
         self.yellow = LED(27) # Pin 13
         self.green = LED(22) # Pin 15
         self.servo = Servo(9)
+        self.red.off()
+        self.servo.min()
         try:
             self.db = mysql.connector.connect(
                 host = db_ip,
@@ -92,7 +94,11 @@ class Report(object):
             if(self.count >= 3):
                 # led_status.status.emit(2)
                 self.count = 0
-                self.authenticated()
+                try:
+                    self.authenticated()
+                except:
+                    pass
+
                 if(self.__isAvailable(name)):
                         print(f"sending . .")
                         time = datetime.now().strftime("%d/%m/%Y %H:%M:%S")

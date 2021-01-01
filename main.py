@@ -97,8 +97,8 @@ class VideoThread(QThread):
         while self._run_flag:
             frame = self.pv.begin()
             name = self.pv.name
-            # temp = peripheral.getTemp(name)
-            temp = 33
+            temp = peripheral.getTemp(name)
+            # temp = 33
             if(name !='' and name != None):
                 report.insert(name, temp)
                 self.pv.name = None
