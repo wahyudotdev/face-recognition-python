@@ -19,22 +19,25 @@ class LedStatus(QThread):
             sleep(2)
             if(self.value == 0):
                 try:
-                    servo.min()
-                    red.on()
+                    print('led merah')
+                    # servo.min()
+                    # red.on()
                 except:
                     pass
             if(self.value == 1):
                 try:
-                    yellow.on()
-                    red.on()
+                    print('led kuning')
+                    # yellow.on()
+                    # red.on()
                 except:
                     pass
             if(self.value == 2):
                 try:
-                    blue.on()
-                    red.off()
-                    servo.max()
-                    yellow.off()
+                    print('led hijau')
+                    # blue.on()
+                    # red.off()
+                    # servo.max()
+                    # yellow.off()
                 except:
                     pass
 
