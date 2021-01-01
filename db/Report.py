@@ -6,46 +6,6 @@ from PyQt5.QtCore import pyqtSignal, pyqtSlot, Qt, QThread
 from time import sleep
 from gpiozero import LED, Servo
 
-
-class LedStatus(QThread):
-    status = pyqtSignal(int)
-    value = None
-    def run(self):
-        while True:
-            sleep(2)
-            if(self.value == 0):
-                try:
-                    print('led merah')
-                    # self.servo.min()
-                    # self.red.on()
-                except:
-                    pass
-            if(self.value == 1):
-                try:
-                    print('led kuning')
-                    # self.yellow.on()
-                    # self.red.on()
-                except:
-                    pass
-            if(self.value == 2):
-                try:
-                    print('led hijau')
-                    # self.green.on()
-                    # self.red.off()
-                    # self.servo.max()
-                    # self.yellow.off()
-                except:
-                    pass
-
-    @pyqtSlot(int)
-    def recv(self, val):
-        self.value = val
-
-
-# led_status = LedStatus()
-# led_status.status.connect(led_status.recv)
-# led_status.start()
-
 class Report(object):
     def __init__(self, chat_id, bot_token, db_ip, db_user, db_password):
         # led_status.status.emit(0)
@@ -127,13 +87,13 @@ class Report(object):
 
     def authenticated(self):
         print('buka')
-        self.red.off()
-        self.green.on()
-        self.servo.max()
-        sleep(5)
-        self.green.off()
-        self.servo.min()
-        self.red.on()
+        # self.red.off()
+        # self.green.on()
+        # self.servo.max()
+        # sleep(5)
+        # self.green.off()
+        # self.servo.min()
+        # self.red.on()
         print('tutup')
 # r = Report("1123810574", "1096181817:AAFAdvG8exQgYiF6q6s3g2pWGwNBwLsUHa4",'localhost','root','raspberry')
 # print(r.insert("Wahyu", "33"))
