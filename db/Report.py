@@ -18,7 +18,7 @@ class Report(object):
         self.green = LED(22) # Pin 15
         self.servo = Servo(9)
         self.red.off()
-        self.servo.min()
+        # self.servo.min()
         self.is_opening = False
         try:
             self.db = mysql.connector.connect(
