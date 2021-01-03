@@ -91,17 +91,18 @@ class Report(object):
 
     def authenticated(self):
         self.servo = Servo(9)
-        self.servo.min()
         self.is_opening = True
         sleep(1)
         print('buka')
         self.red.off()
         self.green.on()
-        self.servo.max()
+        self.servo.min()
         sleep(5)
         self.green.off()
-        self.servo.min()
+        self.servo.max()
         self.red.on()
+        sleep(5)
+        self.servo.min()
         print('tutup')
         self.is_opening = False
         self.servo.close()
