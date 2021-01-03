@@ -16,7 +16,7 @@ class Report(object):
         self.red = LED(17) # Pin 11
         self.yellow = LED(27) # Pin 13
         self.green = LED(22) # Pin 15
-        self.servo = Servo(9)
+
         self.red.off()
         # self.servo.min()
         self.is_opening = False
@@ -88,6 +88,7 @@ class Report(object):
         r = requests.post(url=url, data=obj, files=files)
 
     def authenticated(self):
+        self.servo = Servo(9)
         self.is_opening = True
         print('buka')
         self.red.off()
