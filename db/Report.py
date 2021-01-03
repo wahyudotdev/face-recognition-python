@@ -89,7 +89,9 @@ class Report(object):
 
     def authenticated(self):
         self.servo = Servo(9)
+        self.servo.min()
         self.is_opening = True
+        sleep(1)
         print('buka')
         self.red.off()
         self.green.on()
