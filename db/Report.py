@@ -57,7 +57,9 @@ class Report(object):
                 self.count = 0
                 try:
                     if(self.is_opening == False):
-                        self.authenticated()
+                        srv = Process(target=self.authenticated, args=())
+                        srv.start()
+                        srv.join()
                 except:
                     pass
 
