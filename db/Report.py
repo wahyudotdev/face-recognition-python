@@ -61,24 +61,24 @@ class Report(object):
                 except:
                     pass
 
-                if(self.__isAvailable(name)):
-                        print(f"sending . .")
-                        time = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
-                        sql = 'INSERT INTO tb_absen (nama, suhu, waktu) values (%s, %s, %s)'
-                        val = (str(name), str(temperature), str(time))
-                        try:
-                            self.cursor.execute(sql,val)
-                            self.db.commit()    
-                        except:
-                            print('check your db setting')
-                            pass
-                        p = Process(target=self.send, args=(name, temperature, time))
-                        p.start()
-                        # led_status.status.emit(2)
-                        return True
-                else:
-                    # print("Telah absen")
-                    return False
+                # if(self.__isAvailable(name)):
+                print(f"sending . .")
+                time = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+                sql = 'INSERT INTO tb_absen (nama, suhu, waktu) values (%s, %s, %s)'
+                val = (str(name), str(temperature), str(time))
+                try:
+                    self.cursor.execute(sql,val)
+                    self.db.commit()    
+                except:
+                    print('check your db setting')
+                    pass
+                p = Process(target=self.send, args=(name, temperature, time))
+                p.start()
+                # led_status.status.emit(2)
+                return True
+                # else:
+                #     # print("Telah absen")
+                #     return False
     def send(self, name, temperature, time):
 
         url = f"https://api.telegram.org/bot{self.bot_token}/sendPhoto"
