@@ -18,6 +18,7 @@ class Report(object):
         self.green = LED(22) # Pin 15
         self.doorlock = LED(9)
         self.red.off()
+        self.yellow.on()
         # self.doorlock.off()
         self.is_opening = False
         try:
@@ -94,11 +95,13 @@ class Report(object):
         print('buka')
         self.red.off()
         self.green.on()
+        self.yellow.off()
         self.doorlock.on()
         sleep(10)
         self.green.off()
         self.doorlock.off()
         self.red.on()
+        self.yellow.on()
         print('tutup')
         self.is_opening = False
 # r = Report("1123810574", "1096181817:AAFAdvG8exQgYiF6q6s3g2pWGwNBwLsUHa4",'localhost','root','raspberry')
