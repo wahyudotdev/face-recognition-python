@@ -16,9 +16,9 @@ class Report(object):
         self.red = LED(17) # Pin 11
         self.yellow = LED(27) # Pin 13
         self.green = LED(22) # Pin 15
-
+        self.doorlock = LED(9)
         self.red.off()
-        # self.servo.min()
+        # self.doorlock.off()
         self.is_opening = False
         try:
             self.db = mysql.connector.connect(
@@ -90,19 +90,18 @@ class Report(object):
         r = requests.post(url=url, data=obj, files=files)
 
     def authenticated(self):
-        self.servo = Servo(9)
         self.is_opening = True
         sleep(1)
         print('buka')
         self.red.off()
         self.green.on()
-        self.servo.min()
+        self.doorlock.off()
         sleep(5)
         self.green.off()
-        self.servo.max()
+        self.doorlock.on()
         self.red.on()
         sleep(5)
-        self.servo.min()
+        self.doorlock.off()
         print('tutup')
         self.is_opening = False
         self.servo.close()
