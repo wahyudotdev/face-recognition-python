@@ -101,6 +101,5 @@ class Report(object):
         self.red.on()
         print('tutup')
         self.is_opening = False
-        self.servo.close()
 # r = Report("1123810574", "1096181817:AAFAdvG8exQgYiF6q6s3g2pWGwNBwLsUHa4",'localhost','root','raspberry')
 # print(r.insert("Wahyu", "33"))
