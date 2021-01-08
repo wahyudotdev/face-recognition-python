@@ -67,7 +67,7 @@ class Report(object):
                     pass
 
                 # if(self.__isAvailable(name)):
-                print(f"sending . .")
+                print(f"mengirim . .")
                 time = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
                 sql = 'INSERT INTO tb_absen (nama, suhu, waktu) values (%s, %s, %s)'
                 val = (str(name), str(temperature), str(time))
@@ -91,6 +91,7 @@ class Report(object):
         obj = {f'chat_id': self.chat_id,'caption':message}
         files = {'photo': ('person.jpg', open('db/person.jpg', 'rb'), {'Expires': '0'})}
         r = requests.post(url=url, data=obj, files=files)
+        print(f"===Terkirim===")
 
     def authenticated(self):
         self.is_opening = True
