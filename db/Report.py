@@ -20,7 +20,7 @@ class Report(object):
         self.red.off()
         self.yellow.on()
         self.doorlock.off()
-        self.blue.off()
+        self.blue.on()
         self.is_opening = False
         try:
             self.db = mysql.connector.connect(
