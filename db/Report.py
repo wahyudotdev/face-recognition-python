@@ -21,7 +21,7 @@ class Report(object):
         self.yellow.on()
         self.doorlock.off()
         self.blue.off()
-        print(f'red : {self.red.value}\nyellow : {self.yellow.value}\nblue : {self.blue.value}\nrelay : {self.doorlock.value}')
+        print(f'\n====Scanning====\nred : {self.red.value}\nyellow : {self.yellow.value}\nblue : {self.blue.value}\nrelay : {self.doorlock.value}')
         self.is_opening = False
         try:
             self.db = mysql.connector.connect(
@@ -94,20 +94,19 @@ class Report(object):
 
     def authenticated(self):
         self.is_opening = True
-        print('buka')
         self.yellow.off()
         self.red.off()
         self.blue.on()
         self.doorlock.on()
-        print(f'red : {self.red.value}\nyellow : {self.yellow.value}\nblue : {self.blue.value}\nrelay : {self.doorlock.value}')
+        print(f'\n====Buka====\nred : {self.red.value}\nyellow : {self.yellow.value}\nblue : {self.blue.value}\nrelay : {self.doorlock.value}')
         sleep(10)
-        self.yellow.on()
         self.red.on()
-        self.blue.off()
         self.doorlock.off()
-
-        print('tutup')
-        print(f'red : {self.red.value}\nyellow : {self.yellow.value}\nblue : {self.blue.value}\nrelay : {self.doorlock.value}')
+        self.blue.off()
+        print(f'\n====Tutup====\nred : {self.red.value}\nyellow : {self.yellow.value}\nblue : {self.blue.value}\nrelay : {self.doorlock.value}')
+        sleep(3)
+        self.yellow.on()
+        print(f'\n====Scanning====\nred : {self.red.value}\nyellow : {self.yellow.value}\nblue : {self.blue.value}\nrelay : {self.doorlock.value}')
         self.is_opening = False
 # r = Report("1123810574", "1096181817:AAFAdvG8exQgYiF6q6s3g2pWGwNBwLsUHa4",'localhost','root','raspberry')
 # print(r.insert("Wahyu", "33"))
