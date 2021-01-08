@@ -15,7 +15,7 @@ class Report(object):
         self.chat_id = chat_id
         self.red = LED(17) # Pin 11
         self.yellow = LED(27) # Pin 13
-        self.green = LED(22) # Pin 15
+        self.blue = LED(22) # Pin 15
         self.doorlock = LED(9)
         self.red.off()
         self.yellow.on()
@@ -93,15 +93,15 @@ class Report(object):
     def authenticated(self):
         self.is_opening = True
         print('buka')
-        self.red.off()
-        self.green.on()
         self.yellow.off()
+        self.red.off()
+        self.blue.on()
         self.doorlock.on()
         sleep(10)
-        self.green.off()
-        self.doorlock.off()
-        self.red.on()
         self.yellow.on()
+        self.red.on()
+        self.blue.off()
+        self.doorlock.off()
         print('tutup')
         self.is_opening = False
 # r = Report("1123810574", "1096181817:AAFAdvG8exQgYiF6q6s3g2pWGwNBwLsUHa4",'localhost','root','raspberry')
