@@ -91,7 +91,7 @@ class Report(object):
         obj = {f'chat_id': self.chat_id,'caption':message}
         files = {'photo': ('person.jpg', open('db/person.jpg', 'rb'), {'Expires': '0'})}
         r = requests.post(url=url, data=obj, files=files)
-        print(f"===Terkirim===")
+        print(f"===Telegram terkirim===")
 
     def authenticated(self):
         self.is_opening = True
