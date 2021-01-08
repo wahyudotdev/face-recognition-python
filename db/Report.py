@@ -21,6 +21,7 @@ class Report(object):
         self.yellow.on()
         self.doorlock.off()
         self.blue.off()
+        print(f'red : {self.red.value}\nyellow : {self.yellow.value}\nblue : {self.blue.value}\nrelay : {self.doorlock.value}')
         self.is_opening = False
         try:
             self.db = mysql.connector.connect(
@@ -98,12 +99,15 @@ class Report(object):
         self.red.off()
         self.blue.on()
         self.doorlock.on()
+        print(f'red : {self.red.value}\nyellow : {self.yellow.value}\nblue : {self.blue.value}\nrelay : {self.doorlock.value}')
         sleep(10)
         self.yellow.on()
         self.red.on()
         self.blue.off()
         self.doorlock.off()
+
         print('tutup')
+        print(f'red : {self.red.value}\nyellow : {self.yellow.value}\nblue : {self.blue.value}\nrelay : {self.doorlock.value}')
         self.is_opening = False
 # r = Report("1123810574", "1096181817:AAFAdvG8exQgYiF6q6s3g2pWGwNBwLsUHa4",'localhost','root','raspberry')
 # print(r.insert("Wahyu", "33"))
