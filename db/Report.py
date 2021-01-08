@@ -14,8 +14,8 @@ class Report(object):
         self.bot_token = bot_token
         self.chat_id = chat_id
         self.red = LED(17) # Pin 11
-        self.yellow = LED(27) # Pin 13
-        self.blue = LED(22) # Pin 15
+        self.yellow = LED(22) # Pin 13
+        self.blue = LED(27) # Pin 15
         self.doorlock = LED(9)
         self.red.off()
         self.yellow.on()
