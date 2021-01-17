@@ -59,7 +59,7 @@ class Report(object):
                 # led_status.status.emit(2)
                 self.count = 0
                 try:
-                    if(self.is_opening == False):
+                    if(self.is_opening == False and int(temperature) < 37.5):
                         srv = Process(target=self.authenticated, args=())
                         srv.start()
                         srv.join()
@@ -78,8 +78,7 @@ class Report(object):
                     print('check your db setting')
                     pass
                 p = Process(target=self.send, args=(name, temperature, time))
-                if(int(temperature) < 37):
-                    p.start()
+                p.start()
                 # led_status.status.emit(2)
                 return True
                 # else:
