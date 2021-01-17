@@ -78,7 +78,7 @@ class Report(object):
                     print('check your db setting')
                     pass
                 p = Process(target=self.send, args=(name, temperature, time))
-                if(int(temperature) < 37.5):
+                if(int(temperature) < 37):
                     p.start()
                 # led_status.status.emit(2)
                 return True
